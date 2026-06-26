@@ -55,9 +55,10 @@
           </div>
 
           <div class="quick-actions" aria-label="Sample requests">
-            <button type="button" data-prompt="Find a more central hotel">Central hotel</button>
+            <button type="button" data-prompt="Why did you pick this hotel?">Why this hotel?</button>
+            <button type="button" data-prompt="What is included in the budget?">Budget</button>
+            <button type="button" data-prompt="Make day 2 cheaper">Cheaper day 2</button>
             <button type="button" data-prompt="Add one beach afternoon">Beach afternoon</button>
-            <button type="button" data-prompt="Make this more vegetarian friendly">Vegetarian</button>
           </div>
 
           <form class="composer" id="composer">
@@ -93,15 +94,15 @@
             <article class="result-card">
               <span class="icon blue">AIR</span>
               <div>
-                <h3>Flight</h3>
-                <p>SFO to LIS - EUR 410</p>
+                <h3 id="flightTitle">Flight</h3>
+                <p id="flightMeta">SFO to LIS - EUR 410</p>
               </div>
             </article>
             <article class="result-card">
               <span class="icon mint">HOT</span>
               <div>
-                <h3>Hotel Baixa</h3>
-                <p>3 nights - EUR 240</p>
+                <h3 id="hotelTitle">Hotel Baixa</h3>
+                <p id="hotelMeta">3 nights - EUR 240</p>
               </div>
             </article>
             <article class="result-card" id="dayTwoCard">
@@ -123,7 +124,7 @@
           <div class="timeline" aria-label="Day by day plan">
             <article>
               <strong>Day 1</strong>
-              <p>Arrive, pasteis de nata in Belem, sunset at Miradouro.</p>
+              <p id="dayOnePlan">Arrive, pasteis de nata in Belem, sunset at Miradouro.</p>
             </article>
             <article>
               <strong>Day 2</strong>
@@ -131,11 +132,11 @@
             </article>
             <article>
               <strong>Day 3</strong>
-              <p>Tram 28, Alfama viewpoints, fado dinner.</p>
+              <p id="dayThreePlan">Tram 28, Alfama viewpoints, fado dinner.</p>
             </article>
             <article>
               <strong>Day 4</strong>
-              <p>Tile museum, riverside walk, late flight home.</p>
+              <p id="dayFourPlan">Tile museum, riverside walk, late flight home.</p>
             </article>
           </div>
         </section>
@@ -145,27 +146,30 @@
         <div class="strip-head">
           <div>
             <p class="eyebrow">Agent Work</p>
-            <h2>Tool calls</h2>
+            <h2 id="agentStatus">Ready for follow-up questions</h2>
           </div>
           <button type="button" id="cheaperBtn">Re-plan day 2</button>
         </div>
+        <p class="agent-explainer" id="agentExplainer">
+          Ask about flights, hotels, budget, daily plans, why a choice was made, or how the agent is updating the trip.
+        </p>
         <div class="tool-cards" id="toolCards">
-          <article class="tool-card done">
+          <article class="tool-card done" data-tool="search_flights">
             <span></span>
             <h3>search_flights</h3>
             <p>Found SFO to LIS options under the target budget.</p>
           </article>
-          <article class="tool-card done">
+          <article class="tool-card done" data-tool="search_hotels">
             <span></span>
             <h3>search_hotels</h3>
             <p>Selected a central Baixa stay with easy transit.</p>
           </article>
-          <article class="tool-card active">
+          <article class="tool-card active" data-tool="find_activities">
             <span></span>
             <h3>find_activities</h3>
             <p>Balancing food stops, neighborhoods, and pace.</p>
           </article>
-          <article class="tool-card">
+          <article class="tool-card" data-tool="estimate_budget">
             <span></span>
             <h3>estimate_budget</h3>
             <p>Tracking trip total as plans change.</p>
@@ -174,6 +178,6 @@
       </section>
     </main>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
