@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Travel Agent Demo</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar" aria-label="Travel Agent workspace">
+        <div class="brand-lockup">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <p class="eyebrow">Demo Agent</p>
+            <h1>Travel Agent</h1>
+          </div>
+        </div>
+        <div class="trip-prefs" aria-label="Trip profile">
+          <span>SFO</span>
+          <span>2 travelers</span>
+          <span>mid-budget</span>
+          <span>food-first</span>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="chat-panel" aria-label="Agent chat">
+          <header class="panel-header">
+            <div>
+              <p class="eyebrow">Agent Chat</p>
+              <h2>Lisbon planner</h2>
+            </div>
+            <span class="live-pill">Live</span>
+          </header>
+
+          <div class="messages" id="messages" aria-live="polite">
+            <article class="message user">
+              <p>Plan 4 days in Lisbon for two people. Foodie, mid-budget, flying from SFO.</p>
+            </article>
+            <article class="message agent">
+              <p>On it. I found a reasonable flight, a central hotel, and a food-led day plan.</p>
+              <div class="tool-row">
+                <span>search_flights</span>
+                <span>search_hotels</span>
+                <span>find_activities</span>
+              </div>
+            </article>
+            <article class="message user">
+              <p>Make day 2 a bit cheaper.</p>
+            </article>
+            <article class="message agent">
+              <p>Swapped the food tour for a market crawl and saved about EUR 40. The trip artifact is updated.</p>
+            </article>
+          </div>
+
+          <div class="quick-actions" aria-label="Sample requests">
+            <button type="button" data-prompt="Find a more central hotel">Central hotel</button>
+            <button type="button" data-prompt="Add one beach afternoon">Beach afternoon</button>
+            <button type="button" data-prompt="Make this more vegetarian friendly">Vegetarian</button>
+          </div>
+
+          <form class="composer" id="composer">
+            <label class="sr-only" for="tripInput">Ask about your trip</label>
+            <input id="tripInput" name="tripInput" type="text" placeholder="Ask anything about your trip..." autocomplete="off">
+            <button type="submit" aria-label="Send">Send</button>
+          </form>
+        </aside>
+
+        <section class="artifact-panel" aria-label="Trip artifact">
+          <header class="artifact-head">
+            <div>
+              <p class="eyebrow">Trip Artifact</p>
+              <h2>Lisbon - 4 days</h2>
+              <p class="muted">2 travelers - mid-budget - Jun 12 to Jun 16</p>
+            </div>
+            <div class="price-block">
+              <span id="tripTotal">EUR 820</span>
+              <small>estimated</small>
+            </div>
+          </header>
+
+          <div class="map-card">
+            <img src="assets/lisbon-map-preview.png" alt="Map-style preview of a Lisbon itinerary">
+            <div class="map-route">
+              <span>Baixa</span>
+              <span>Alfama</span>
+              <span>Belem</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <article class="result-card">
+              <span class="icon blue">AIR</span>
+              <div>
+                <h3>Flight</h3>
+                <p>SFO to LIS - EUR 410</p>
+              </div>
+            </article>
+            <article class="result-card">
+              <span class="icon mint">HOT</span>
+              <div>
+                <h3>Hotel Baixa</h3>
+                <p>3 nights - EUR 240</p>
+              </div>
+            </article>
+            <article class="result-card" id="dayTwoCard">
+              <span class="icon coral">EAT</span>
+              <div>
+                <h3 id="dayTwoTitle">Time Out Market</h3>
+                <p id="dayTwoCost">Day 2 - EUR 25</p>
+              </div>
+            </article>
+            <article class="result-card">
+              <span class="icon violet">TRM</span>
+              <div>
+                <h3>Tram 28 + Alfama</h3>
+                <p>Day 3 - free</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="timeline" aria-label="Day by day plan">
+            <article>
+              <strong>Day 1</strong>
+              <p>Arrive, pasteis de nata in Belem, sunset at Miradouro.</p>
+            </article>
+            <article>
+              <strong>Day 2</strong>
+              <p id="dayTwoPlan">Market crawl, Time Out Market, Bairro Alto bars.</p>
+            </article>
+            <article>
+              <strong>Day 3</strong>
+              <p>Tram 28, Alfama viewpoints, fado dinner.</p>
+            </article>
+            <article>
+              <strong>Day 4</strong>
+              <p>Tile museum, riverside walk, late flight home.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="agent-strip" aria-label="Agent work log">
+        <div class="strip-head">
+          <div>
+            <p class="eyebrow">Agent Work</p>
+            <h2>Tool calls</h2>
+          </div>
+          <button type="button" id="cheaperBtn">Re-plan day 2</button>
+        </div>
+        <div class="tool-cards" id="toolCards">
+          <article class="tool-card done">
+            <span></span>
+            <h3>search_flights</h3>
+            <p>Found SFO to LIS options under the target budget.</p>
+          </article>
+          <article class="tool-card done">
+            <span></span>
+            <h3>search_hotels</h3>
+            <p>Selected a central Baixa stay with easy transit.</p>
+          </article>
+          <article class="tool-card active">
+            <span></span>
+            <h3>find_activities</h3>
+            <p>Balancing food stops, neighborhoods, and pace.</p>
+          </article>
+          <article class="tool-card">
+            <span></span>
+            <h3>estimate_budget</h3>
+            <p>Tracking trip total as plans change.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
