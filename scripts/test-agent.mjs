@@ -1,4 +1,6 @@
-import { answerQuestion, createTripState } from "../agent.js";
+await import("../agent.js");
+
+const { answerQuestion, createTripState } = globalThis.TravelAgentCore;
 
 function assert(condition, message) {
   if (!condition) {

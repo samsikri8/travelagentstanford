@@ -1,5 +1,6 @@
-export function createTripState() {
-  return {
+(() => {
+  function createTripState() {
+    return {
     destination: "Lisbon",
     days: 4,
     travelers: 2,
@@ -33,19 +34,19 @@ export function createTripState() {
       "Every answer is generated from the trip state in agent.js.",
       "Refinements update the visible trip artifact so the UI behaves like an agent workspace."
     ]
-  };
-}
+    };
+  }
 
-export const toolDetails = {
-  search_flights: "Checked route, rough cost, and whether the flight leaves budget for the rest of the trip.",
-  search_hotels: "Compared central neighborhoods, nightly cost, walking convenience, and transit access.",
-  find_activities: "Looked for food, neighborhood, beach, and low-cost activities that fit the day-by-day pace.",
-  recommend_food: "Adjusted restaurants and markets around the food-first preference.",
-  estimate_budget: "Recomputed flight, hotel, activity, and daily spend estimates.",
-  build_itinerary: "Reassembled the day-by-day plan so nearby stops happen together.",
-  geocode_place: "Placed neighborhoods and day stops on the map preview.",
-  save_to_trip: "Saved the new plan back into the visible trip artifact."
-};
+  const toolDetails = {
+    search_flights: "Checked route, rough cost, and whether the flight leaves budget for the rest of the trip.",
+    search_hotels: "Compared central neighborhoods, nightly cost, walking convenience, and transit access.",
+    find_activities: "Looked for food, neighborhood, beach, and low-cost activities that fit the day-by-day pace.",
+    recommend_food: "Adjusted restaurants and markets around the food-first preference.",
+    estimate_budget: "Recomputed flight, hotel, activity, and daily spend estimates.",
+    build_itinerary: "Reassembled the day-by-day plan so nearby stops happen together.",
+    geocode_place: "Placed neighborhoods and day stops on the map preview.",
+    save_to_trip: "Saved the new plan back into the visible trip artifact."
+  };
 
 function normalize(text) {
   return text.toLowerCase().replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -84,7 +85,7 @@ function makeVegetarianFriendly(trip) {
   };
 }
 
-export function answerQuestion(trip, rawText) {
+function answerQuestion(trip, rawText) {
   const text = normalize(rawText);
 
   if (includesAny(text, ["cheaper", "lower budget", "save money", "less expensive"])) {
@@ -177,3 +178,11 @@ export function answerQuestion(trip, rawText) {
     summary: "The agent did not find a specific travel intent, so it offered useful questions it can handle."
   };
 }
+
+  const target = typeof window !== "undefined" ? window : globalThis;
+  target.TravelAgentCore = {
+    answerQuestion,
+    createTripState,
+    toolDetails
+  };
+})();

@@ -1,4 +1,10 @@
-import { answerQuestion, createTripState, toolDetails } from "./agent.js";
+const agentCore = window.TravelAgentCore;
+
+if (!agentCore) {
+  throw new Error("TravelAgentCore did not load. Make sure agent.js is included before app.js.");
+}
+
+const { answerQuestion, createTripState, toolDetails } = agentCore;
 
 const trip = createTripState();
 
@@ -84,6 +90,15 @@ function handlePrompt(text, shouldEchoUser = true) {
 }
 
 dom.composer.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const value = dom.input.value.trim();
+  if (!value) return;
+  handlePrompt(value);
+  dom.input.value = "";
+});
+
+dom.input.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" || event.shiftKey) return;
   event.preventDefault();
   const value = dom.input.value.trim();
   if (!value) return;
