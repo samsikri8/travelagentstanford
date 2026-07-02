@@ -16,11 +16,11 @@
             <h1>Travel Agent</h1>
           </div>
         </div>
-        <div class="trip-prefs" aria-label="Trip profile">
+        <div class="trip-prefs" id="tripPrefs" aria-label="Trip profile">
           <span>SFO</span>
-          <span>2 travelers</span>
-          <span>mid-budget</span>
-          <span>food-first</span>
+          <span>4 travelers</span>
+          <span>flexible</span>
+          <span>activities daily</span>
         </div>
       </section>
 
@@ -29,17 +29,17 @@
           <header class="panel-header">
             <div>
               <p class="eyebrow">Agent Chat</p>
-              <h2>Lisbon planner</h2>
+              <h2>Trip planner</h2>
             </div>
             <span class="live-pill">Live</span>
           </header>
 
           <div class="messages" id="messages" aria-live="polite">
             <article class="message user">
-              <p>Plan 4 days in Lisbon for two people. Foodie, mid-budget, flying from SFO.</p>
+              <p>Trip for 4 to Hawaii, fly from SF to Honolulu, different activity every day, 6 days, flexible budget.</p>
             </article>
             <article class="message agent">
-              <p>On it. I found a reasonable flight, a central hotel, and a food-led day plan.</p>
+              <p>Done. I made up a 6-day Honolulu plan with flights, a Waikiki hotel, daily activities, and a group estimate.</p>
               <div class="tool-row">
                 <span>search_flights</span>
                 <span>search_hotels</span>
@@ -47,18 +47,18 @@
               </div>
             </article>
             <article class="message user">
-              <p>Make day 2 a bit cheaper.</p>
+              <p>Can you make it a bit cheaper?</p>
             </article>
             <article class="message agent">
-              <p>Swapped the food tour for a market crawl and saved about EUR 40. The trip artifact is updated.</p>
+              <p>Yes. I can switch the plan to a budget version, change activities, update days, or explain the price.</p>
             </article>
           </div>
 
           <div class="quick-actions" aria-label="Sample requests">
-            <button type="button" data-prompt="Why did you pick this hotel?">Why this hotel?</button>
+            <button type="button" data-prompt="Make it cheaper">Cheaper</button>
+            <button type="button" data-prompt="Add more beach time">Beach time</button>
+            <button type="button" data-prompt="Make it 5 days instead">5 days</button>
             <button type="button" data-prompt="What is included in the budget?">Budget</button>
-            <button type="button" data-prompt="Make day 2 cheaper">Cheaper day 2</button>
-            <button type="button" data-prompt="Add one beach afternoon">Beach afternoon</button>
           </div>
 
           <form class="composer" id="composer">
@@ -72,11 +72,11 @@
           <header class="artifact-head">
             <div>
               <p class="eyebrow">Trip Artifact</p>
-              <h2>Lisbon - 4 days</h2>
-              <p class="muted">2 travelers - mid-budget - Jun 12 to Jun 16</p>
+              <h2 id="tripTitle">Honolulu - 6 days</h2>
+              <p class="muted" id="tripSubtitle">4 travelers - flexible budget - activities daily</p>
             </div>
             <div class="price-block">
-              <span id="tripTotal">EUR 820</span>
+              <span id="tripTotal">USD 0</span>
               <small>estimated</small>
             </div>
           </header>
@@ -105,39 +105,23 @@
                 <p id="hotelMeta">3 nights - EUR 240</p>
               </div>
             </article>
-            <article class="result-card" id="dayTwoCard">
+            <article class="result-card" id="activityOneCard">
               <span class="icon coral">EAT</span>
               <div>
-                <h3 id="dayTwoTitle">Time Out Market</h3>
-                <p id="dayTwoCost">Day 2 - EUR 25</p>
+                <h3 id="activityOneTitle">Daily Activity</h3>
+                <p id="activityOneCost">Day 1 - included</p>
               </div>
             </article>
             <article class="result-card">
               <span class="icon violet">TRM</span>
               <div>
-                <h3>Tram 28 + Alfama</h3>
-                <p>Day 3 - free</p>
+                <h3 id="activityTwoTitle">Activity Plan</h3>
+                <p id="activityTwoCost">Day 2 - included</p>
               </div>
             </article>
           </div>
 
-          <div class="timeline" aria-label="Day by day plan">
-            <article>
-              <strong>Day 1</strong>
-              <p id="dayOnePlan">Arrive, pasteis de nata in Belem, sunset at Miradouro.</p>
-            </article>
-            <article>
-              <strong>Day 2</strong>
-              <p id="dayTwoPlan">Market crawl, Time Out Market, Bairro Alto bars.</p>
-            </article>
-            <article>
-              <strong>Day 3</strong>
-              <p id="dayThreePlan">Tram 28, Alfama viewpoints, fado dinner.</p>
-            </article>
-            <article>
-              <strong>Day 4</strong>
-              <p id="dayFourPlan">Tile museum, riverside walk, late flight home.</p>
-            </article>
+          <div class="timeline" id="timeline" aria-label="Day by day plan">
           </div>
         </section>
       </section>
@@ -148,10 +132,10 @@
             <p class="eyebrow">Agent Work</p>
             <h2 id="agentStatus">Ready for follow-up questions</h2>
           </div>
-          <button type="button" id="cheaperBtn">Re-plan day 2</button>
+          <button type="button" id="cheaperBtn">Make cheaper</button>
         </div>
         <p class="agent-explainer" id="agentExplainer">
-          Ask about flights, hotels, budget, daily plans, why a choice was made, or how the agent is updating the trip.
+          Ask for a new trip, then change the destination, budget, days, hotel style, or activities.
         </p>
         <div class="tool-cards" id="toolCards">
           <article class="tool-card done" data-tool="search_flights">

@@ -14,17 +14,19 @@ const dom = {
   input: document.querySelector("#tripInput"),
   quickActions: document.querySelectorAll("[data-prompt]"),
   cheaperBtn: document.querySelector("#cheaperBtn"),
+  tripPrefs: document.querySelector("#tripPrefs"),
+  tripTitle: document.querySelector("#tripTitle"),
+  tripSubtitle: document.querySelector("#tripSubtitle"),
   tripTotal: document.querySelector("#tripTotal"),
   flightTitle: document.querySelector("#flightTitle"),
   flightMeta: document.querySelector("#flightMeta"),
   hotelTitle: document.querySelector("#hotelTitle"),
   hotelMeta: document.querySelector("#hotelMeta"),
-  dayTwoTitle: document.querySelector("#dayTwoTitle"),
-  dayTwoCost: document.querySelector("#dayTwoCost"),
-  dayOnePlan: document.querySelector("#dayOnePlan"),
-  dayTwoPlan: document.querySelector("#dayTwoPlan"),
-  dayThreePlan: document.querySelector("#dayThreePlan"),
-  dayFourPlan: document.querySelector("#dayFourPlan"),
+  activityOneTitle: document.querySelector("#activityOneTitle"),
+  activityOneCost: document.querySelector("#activityOneCost"),
+  activityTwoTitle: document.querySelector("#activityTwoTitle"),
+  activityTwoCost: document.querySelector("#activityTwoCost"),
+  timeline: document.querySelector("#timeline"),
   agentStatus: document.querySelector("#agentStatus"),
   agentExplainer: document.querySelector("#agentExplainer"),
   toolCards: document.querySelectorAll(".tool-card")
@@ -68,17 +70,40 @@ function setToolState(tools, summary) {
 }
 
 function renderTrip() {
-  dom.tripTotal.textContent = `EUR ${trip.total}`;
+  const budgetLabel = trip.budget === "budget"
+    ? "budget-conscious"
+    : trip.budget === "flexible"
+      ? "flexible budget"
+      : trip.budget;
+  dom.tripTitle.textContent = `${trip.destination} - ${trip.days} day${trip.days === 1 ? "" : "s"}`;
+  dom.tripSubtitle.textContent = `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"} - ${budgetLabel} - ${trip.style}`;
+  dom.tripPrefs.innerHTML = "";
+  [trip.origin, `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"}`, trip.budget, `${trip.days} days`].forEach((item) => {
+    const chip = document.createElement("span");
+    chip.textContent = item;
+    dom.tripPrefs.append(chip);
+  });
+
+  dom.tripTotal.textContent = `${trip.currency} ${trip.total}`;
   dom.flightTitle.textContent = trip.flight.title;
-  dom.flightMeta.textContent = `${trip.flight.route} - EUR ${trip.flight.cost}`;
+  dom.flightMeta.textContent = `${trip.flight.route} - ${trip.currency} ${trip.flight.cost}`;
   dom.hotelTitle.textContent = trip.hotel.title;
-  dom.hotelMeta.textContent = `${trip.hotel.nights} nights - EUR ${trip.hotel.cost}`;
-  dom.dayTwoTitle.textContent = trip.highlights[0].title;
-  dom.dayTwoCost.textContent = `Day ${trip.highlights[0].day} - ${trip.highlights[0].cost ? `EUR ${trip.highlights[0].cost}` : "free"}`;
-  dom.dayOnePlan.textContent = trip.daysPlan[0];
-  dom.dayTwoPlan.textContent = trip.daysPlan[1];
-  dom.dayThreePlan.textContent = trip.daysPlan[2];
-  dom.dayFourPlan.textContent = trip.daysPlan[3];
+  dom.hotelMeta.textContent = `${trip.hotel.nights} night${trip.hotel.nights === 1 ? "" : "s"} - ${trip.currency} ${trip.hotel.cost}`;
+  dom.activityOneTitle.textContent = trip.highlights[0]?.title || "Daily activity";
+  dom.activityOneCost.textContent = `Day ${trip.highlights[0]?.day || 1} - ${trip.currency} ${trip.highlights[0]?.cost || 0}`;
+  dom.activityTwoTitle.textContent = trip.highlights[1]?.title || "Activity plan";
+  dom.activityTwoCost.textContent = `Day ${trip.highlights[1]?.day || 2} - ${trip.currency} ${trip.highlights[1]?.cost || 0}`;
+
+  dom.timeline.innerHTML = "";
+  trip.daysPlan.forEach((plan, index) => {
+    const item = document.createElement("article");
+    const label = document.createElement("strong");
+    const text = document.createElement("p");
+    label.textContent = `Day ${index + 1}`;
+    text.textContent = plan;
+    item.append(label, text);
+    dom.timeline.append(item);
+  });
 }
 
 function handlePrompt(text, shouldEchoUser = true) {
@@ -113,7 +138,7 @@ dom.quickActions.forEach((button) => {
 });
 
 dom.cheaperBtn.addEventListener("click", () => {
-  handlePrompt("Make day 2 cheaper");
+  handlePrompt("Make it cheaper");
 });
 
 renderTrip();
