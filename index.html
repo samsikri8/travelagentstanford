@@ -12,7 +12,7 @@
         <div class="brand-lockup">
           <span class="status-dot" aria-hidden="true"></span>
           <div>
-            <p class="eyebrow">Demo Agent</p>
+            <p class="eyebrow">Travel Agent</p>
             <h1>Travel Agent</h1>
           </div>
         </div>
@@ -31,7 +31,7 @@
               <p class="eyebrow">Agent Chat</p>
               <h2>Trip planner</h2>
             </div>
-            <span class="live-pill">Live</span>
+            <span class="live-pill" id="agentMode">Local</span>
           </header>
 
           <div class="messages" id="messages" aria-live="polite">
@@ -82,38 +82,66 @@
           </header>
 
           <div class="map-card">
-            <img src="assets/lisbon-map-preview.png" alt="Map-style preview of a Lisbon itinerary">
+            <img src="assets/lisbon-map-preview.png" alt="Map-style preview of a trip itinerary">
             <div class="map-route">
-              <span>Baixa</span>
-              <span>Alfama</span>
-              <span>Belem</span>
+              <span id="routeOrigin">SFO</span>
+              <span id="routeStay">Waikiki</span>
+              <span id="routeDestination">Honolulu</span>
             </div>
           </div>
 
           <div class="result-grid">
             <article class="result-card">
-              <span class="icon blue">AIR</span>
+              <span class="icon blue" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <path d="M3.5 11.6 20.4 4.4c.8-.3 1.5.4 1.1 1.1l-7.1 16.9c-.3.7-1.4.6-1.5-.2l-1.1-8.1-8.1-1.1c-.8-.1-.9-1.1-.2-1.4Z"></path>
+                  <path d="m12 14 4-4"></path>
+                </svg>
+              </span>
               <div>
                 <h3 id="flightTitle">Flight</h3>
                 <p id="flightMeta">SFO to LIS - EUR 410</p>
               </div>
             </article>
             <article class="result-card">
-              <span class="icon mint">HOT</span>
+              <span class="icon mint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <path d="M5 21V5.8c0-.8.6-1.4 1.4-1.4h7.2c.8 0 1.4.6 1.4 1.4V21"></path>
+                  <path d="M15 9.5h2.6c.8 0 1.4.6 1.4 1.4V21"></path>
+                  <path d="M8 8h3"></path>
+                  <path d="M8 12h3"></path>
+                  <path d="M8 16h3"></path>
+                  <path d="M3.5 21h17"></path>
+                </svg>
+              </span>
               <div>
                 <h3 id="hotelTitle">Hotel Baixa</h3>
                 <p id="hotelMeta">3 nights - EUR 240</p>
               </div>
             </article>
             <article class="result-card" id="activityOneCard">
-              <span class="icon coral">EAT</span>
+              <span class="icon coral" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <path d="M12 3.5 14.1 8l4.9.7-3.5 3.4.8 4.8L12 14.6 7.7 17l.8-4.8L5 8.7 9.9 8 12 3.5Z"></path>
+                  <path d="M4.5 20.5h15"></path>
+                </svg>
+              </span>
               <div>
                 <h3 id="activityOneTitle">Daily Activity</h3>
                 <p id="activityOneCost">Day 1 - included</p>
               </div>
             </article>
             <article class="result-card">
-              <span class="icon violet">TRM</span>
+              <span class="icon violet" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                  <path d="M7 5.5h10"></path>
+                  <path d="M7 12h10"></path>
+                  <path d="M7 18.5h10"></path>
+                  <path d="M5 5.5a2 2 0 1 0 0 .1"></path>
+                  <path d="M5 12a2 2 0 1 0 0 .1"></path>
+                  <path d="M5 18.5a2 2 0 1 0 0 .1"></path>
+                </svg>
+              </span>
               <div>
                 <h3 id="activityTwoTitle">Activity Plan</h3>
                 <p id="activityTwoCost">Day 2 - included</p>
@@ -140,22 +168,22 @@
         <div class="tool-cards" id="toolCards">
           <article class="tool-card done" data-tool="search_flights">
             <span></span>
-            <h3>search_flights</h3>
-            <p>Found SFO to LIS options under the target budget.</p>
+            <h3>Flights</h3>
+            <p>Compares route, timing, and estimated group fare.</p>
           </article>
           <article class="tool-card done" data-tool="search_hotels">
             <span></span>
-            <h3>search_hotels</h3>
-            <p>Selected a central Baixa stay with easy transit.</p>
+            <h3>Stay</h3>
+            <p>Chooses a hotel area that fits the group and budget.</p>
           </article>
           <article class="tool-card active" data-tool="find_activities">
             <span></span>
-            <h3>find_activities</h3>
-            <p>Balancing food stops, neighborhoods, and pace.</p>
+            <h3>Activities</h3>
+            <p>Builds a daily plan around the traveler preferences.</p>
           </article>
           <article class="tool-card" data-tool="estimate_budget">
             <span></span>
-            <h3>estimate_budget</h3>
+            <h3>Budget</h3>
             <p>Tracking trip total as plans change.</p>
           </article>
         </div>

@@ -341,8 +341,16 @@ h3 {
   place-items: center;
   border-radius: 8px;
   color: #263244;
-  font-size: 0.7rem;
-  font-weight: 900;
+}
+
+.icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
 }
 
 .blue {
