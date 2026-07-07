@@ -74,6 +74,9 @@ function repairTripShape(previousTrip, candidate) {
   trip.hotel ||= previousTrip.hotel;
   trip.highlights = Array.isArray(trip.highlights) ? trip.highlights : previousTrip.highlights;
   trip.daysPlan = Array.isArray(trip.daysPlan) ? trip.daysPlan : previousTrip.daysPlan;
+  trip.costBreakdown = trip.costBreakdown && typeof trip.costBreakdown === "object"
+    ? trip.costBreakdown
+    : previousTrip.costBreakdown;
   return trip;
 }
 
@@ -96,9 +99,10 @@ function buildSystemPrompt() {
     "Given the previous trip state and a user message, update the trip if requested and answer conversationally.",
     "The response JSON shape must be:",
     "{",
-    "  \"trip\": { same fields as previous trip, with updated destination/origin/days/travelers/budget/style/currency/total/flight/hotel/highlights/daysPlan },",
+    "  \"trip\": { same fields as previous trip, with updated destination/origin/days/travelers/budget/style/currency/total/flight/hotel/highlights/daysPlan/costBreakdown },",
     "  \"result\": { \"text\": string, \"tools\": string[], \"summary\": string }",
     "}",
+    "costBreakdown must include flights, stay, activities, and other arrays. Each item must have label and cost.",
     "Use concise text. For tools, choose from parse_trip_request, search_flights, search_hotels, find_activities, estimate_budget, build_itinerary, save_to_trip.",
     "Keep all prices as whole numbers. Keep daysPlan length equal to trip.days."
   ].join("\n");

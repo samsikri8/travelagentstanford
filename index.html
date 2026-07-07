@@ -17,10 +17,10 @@
           </div>
         </div>
         <div class="trip-prefs" id="tripPrefs" aria-label="Trip profile">
-          <span>SFO</span>
-          <span>4 travelers</span>
-          <span>flexible</span>
-          <span>activities daily</span>
+          <span>origin</span>
+          <span>travelers</span>
+          <span>budget</span>
+          <span>dates</span>
         </div>
       </section>
 
@@ -38,30 +38,16 @@
           </header>
 
           <div class="messages" id="messages" aria-live="polite">
-            <article class="message user">
-              <p>Trip for 4 to Hawaii, fly from SF to Honolulu, different activity every day, 6 days, flexible budget.</p>
-            </article>
             <article class="message agent">
-              <p>Done. I made up a 6-day Honolulu plan with flights, a Waikiki hotel, daily activities, and a group estimate.</p>
-              <div class="tool-row">
-                <span>Flights</span>
-                <span>Stay</span>
-                <span>Activities</span>
-              </div>
-            </article>
-            <article class="message user">
-              <p>Can you make it a bit cheaper?</p>
-            </article>
-            <article class="message agent">
-              <p>Yes. I can switch the plan to a budget version, change activities, update days, or explain the price.</p>
+              <p>Tell me where you want to go, where you are flying from, how many people are traveling, how long you are staying, and what kind of trip you want.</p>
             </article>
           </div>
 
           <div class="quick-actions" aria-label="Sample requests">
-            <button type="button" data-prompt="Make it cheaper">Cheaper</button>
-            <button type="button" data-prompt="Add more beach time">Beach time</button>
-            <button type="button" data-prompt="Make it 5 days instead">5 days</button>
-            <button type="button" data-prompt="What is included in the budget?">Budget</button>
+            <button type="button" data-prompt="Trip for 2 to Paris from SFO for 5 days with food and museums">Paris idea</button>
+            <button type="button" data-prompt="Trip for 4 to Tokyo from LAX for 7 days, flexible budget, food and adventure">Tokyo idea</button>
+            <button type="button" data-prompt="Trip for 3 to New York from SFO for 4 days, budget-conscious, food and shows">NYC idea</button>
+            <button type="button" data-prompt="Trip for 2 to Lisbon from JFK for 6 days, mid-budget, food and neighborhoods">Lisbon idea</button>
           </div>
 
           <form class="composer" id="composer">
@@ -75,8 +61,8 @@
           <header class="artifact-head">
             <div>
               <p class="eyebrow">Trip Artifact</p>
-              <h2 id="tripTitle">Honolulu - 6 days</h2>
-              <p class="muted" id="tripSubtitle">4 travelers - flexible budget - activities daily</p>
+              <h2 id="tripTitle">Plan a new trip</h2>
+              <p class="muted" id="tripSubtitle">Describe the trip you want, and the agent will build the plan.</p>
             </div>
             <div class="price-block">
               <span id="tripTotal">USD 0</span>
@@ -84,17 +70,20 @@
             </div>
           </header>
 
-          <div class="map-card">
-            <img src="assets/lisbon-map-preview.png" alt="Map-style preview of a trip itinerary">
+          <div class="destination-card" id="destinationCard">
+            <div>
+              <p class="eyebrow">Destination</p>
+              <strong id="destinationHero">Where to?</strong>
+            </div>
             <div class="map-route">
-              <span id="routeOrigin">SFO</span>
-              <span id="routeStay">Waikiki</span>
-              <span id="routeDestination">Honolulu</span>
+              <span id="routeOrigin">origin</span>
+              <span id="routeStay">stay</span>
+              <span id="routeDestination">destination</span>
             </div>
           </div>
 
-          <div class="result-grid">
-            <article class="result-card">
+          <div class="cost-breakdown" aria-label="Cost breakdown">
+            <article class="cost-section">
               <span class="icon blue" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img">
                   <path d="M3.5 11.6 20.4 4.4c.8-.3 1.5.4 1.1 1.1l-7.1 16.9c-.3.7-1.4.6-1.5-.2l-1.1-8.1-8.1-1.1c-.8-.1-.9-1.1-.2-1.4Z"></path>
@@ -102,11 +91,11 @@
                 </svg>
               </span>
               <div>
-                <h3 id="flightTitle">Flight</h3>
-                <p id="flightMeta">SFO to LIS - EUR 410</p>
+                <h3 id="flightTitle">Flights</h3>
+                <ul class="cost-list" id="flightCosts"></ul>
               </div>
             </article>
-            <article class="result-card">
+            <article class="cost-section">
               <span class="icon mint" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img">
                   <path d="M5 21V5.8c0-.8.6-1.4 1.4-1.4h7.2c.8 0 1.4.6 1.4 1.4V21"></path>
@@ -118,11 +107,11 @@
                 </svg>
               </span>
               <div>
-                <h3 id="hotelTitle">Hotel Baixa</h3>
-                <p id="hotelMeta">3 nights - EUR 240</p>
+                <h3 id="hotelTitle">Stay</h3>
+                <ul class="cost-list" id="stayCosts"></ul>
               </div>
             </article>
-            <article class="result-card" id="activityOneCard">
+            <article class="cost-section">
               <span class="icon coral" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img">
                   <path d="M12 3.5 14.1 8l4.9.7-3.5 3.4.8 4.8L12 14.6 7.7 17l.8-4.8L5 8.7 9.9 8 12 3.5Z"></path>
@@ -130,11 +119,11 @@
                 </svg>
               </span>
               <div>
-                <h3 id="activityOneTitle">Daily Activity</h3>
-                <p id="activityOneCost">Day 1 - included</p>
+                <h3>Activities</h3>
+                <ul class="cost-list" id="activityCosts"></ul>
               </div>
             </article>
-            <article class="result-card">
+            <article class="cost-section">
               <span class="icon violet" aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img">
                   <path d="M7 5.5h10"></path>
@@ -146,8 +135,8 @@
                 </svg>
               </span>
               <div>
-                <h3 id="activityTwoTitle">Activity Plan</h3>
-                <p id="activityTwoCost">Day 2 - included</p>
+                <h3>Other expenses</h3>
+                <ul class="cost-list" id="otherCosts"></ul>
               </div>
             </article>
           </div>

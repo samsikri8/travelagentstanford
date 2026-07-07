@@ -117,6 +117,7 @@
       hotel: {},
       highlights: [],
       daysPlan: [],
+      costBreakdown: {},
       lastBrief: "Trip for 4 to Hawaii, fly from SF to Honolulu, different activity every day, 6 days, flexible budget.",
       notes: [
         "This demo uses generated mock travel data.",
@@ -289,6 +290,17 @@
     const hotelCost = Math.round(profile.nightlyHotel * multiplier * nights * Math.max(1, Math.ceil(trip.travelers / 2)));
     const activityCost = Math.round(85 * multiplier * trip.days * trip.travelers);
     const foodTransitCost = Math.round(75 * multiplier * trip.days * trip.travelers);
+    const foodCost = Math.round(52 * multiplier * trip.days * trip.travelers);
+    const transportCost = foodTransitCost - foodCost;
+    const activityItems = Array.from({ length: trip.days }, (_, index) => {
+      const title = activities[index % activities.length];
+      const base = index === 0 ? 45 : index === trip.days - 1 ? 55 : 85;
+      return {
+        label: `Day ${index + 1}: ${title}`,
+        cost: Math.round(base * multiplier * trip.travelers)
+      };
+    });
+    const normalizedActivityTotal = activityItems.reduce((sum, item) => sum + item.cost, 0);
 
     trip.flight = {
       title: "Flight",
@@ -313,11 +325,25 @@
     });
 
     trip.highlights = [
-      { title: trip.daysPlan[0].split(",")[2]?.trim() || profile.activities[0], day: 1, cost: Math.round(45 * multiplier * trip.travelers) },
-      { title: activities[1 % activities.length], day: Math.min(2, trip.days), cost: Math.round(70 * multiplier * trip.travelers) }
+      { title: trip.daysPlan[0].split(",")[2]?.trim() || profile.activities[0], day: 1, cost: activityItems[0]?.cost || 0 },
+      { title: activities[1 % activities.length], day: Math.min(2, trip.days), cost: activityItems[1]?.cost || 0 }
     ];
 
-    trip.total = flightCost + hotelCost + activityCost + foodTransitCost;
+    trip.costBreakdown = {
+      flights: [
+        { label: `${trip.origin} to ${profile.airport} group fare`, cost: flightCost }
+      ],
+      stay: [
+        { label: `${profile.hotel} - ${nights} night${nights === 1 ? "" : "s"}`, cost: hotelCost }
+      ],
+      activities: activityItems,
+      other: [
+        { label: "Food estimate", cost: foodCost },
+        { label: "Local transport", cost: transportCost }
+      ]
+    };
+
+    trip.total = flightCost + hotelCost + normalizedActivityTotal + foodTransitCost;
   }
 
   function rebuildResponse(trip, text, summary) {
@@ -351,11 +377,9 @@
 
   function addActivityPreference(trip, preference) {
     trip.style = `${trip.style}, ${preference}`.replace(/^,\s*/, "");
-    const insertDay = Math.min(2, trip.days - 1);
-    trip.daysPlan[insertDay] = `${titleCase(preference)} feature activity, local lunch, and an evening plan matched to the group pace.`;
-    trip.highlights[1] = { title: `${titleCase(preference)} activity`, day: insertDay + 1, cost: Math.round(65 * budgetMultiplier(trip) * trip.travelers) };
+    buildTrip(trip);
     return {
-      text: `Added a ${preference} angle and updated day ${insertDay + 1}. The trip now keeps ${trip.style} in mind.`,
+      text: `Added a ${preference} angle and rebuilt the daily activities. The trip now keeps ${trip.style} in mind.`,
       tools: ["find_activities", "estimate_budget", "build_itinerary", "save_to_trip"],
       summary: "The agent treated the follow-up as an itinerary edit and changed the day-by-day plan."
     };
@@ -404,7 +428,7 @@
 
     if (includesAny(text, ["budget", "cost", "price", "included", "total", "breakdown"])) {
       return {
-        text: `The current estimate is ${trip.currency} ${trip.total}: ${trip.currency} ${trip.flight.cost} flights, ${trip.currency} ${trip.hotel.cost} lodging, plus mock activities, food, and local transport for ${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"}.`,
+        text: `The current estimate is ${trip.currency} ${trip.total}: ${trip.currency} ${trip.flight.cost} flights, ${trip.currency} ${trip.hotel.cost} lodging, ${trip.currency} ${trip.costBreakdown.activities.reduce((sum, item) => sum + item.cost, 0)} activities, plus food and local transport for ${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"}.`,
         tools: ["estimate_budget"],
         summary: "The agent answered from the current trip budget state."
       };
@@ -437,7 +461,7 @@
     }
 
     return {
-      text: `I can build or edit a trip. Try: "Trip for 4 to Hawaii, fly from SF to Honolulu, different activity every day, 6 days, flexible budget." Then ask me to make it cheaper, add beach time, change to 5 days, upgrade the hotel, or explain the budget.`,
+      text: `I can build or edit a trip. Try: "Trip for 2 to Paris from SFO for 5 days with food and museums." Then ask me to make it cheaper, add beach time, change to 5 days, upgrade the hotel, or explain the budget.`,
       tools: [],
       summary: "The agent offered examples because it did not find a specific travel-planning intent."
     };

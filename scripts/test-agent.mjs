@@ -20,6 +20,9 @@ assert(trip.origin === "SFO", "Trip origin should normalize SF to SFO.");
 assert(trip.travelers === 4, "Trip should capture 4 travelers.");
 assert(trip.days === 6, "Trip should capture 6 days.");
 assert(trip.daysPlan.length === 6, "Trip should generate one plan per day.");
+assert(trip.costBreakdown.activities.length === 6, "Trip should generate one activity cost per day.");
+assert(trip.costBreakdown.flights[0].cost > 0, "Trip should include an itemized flight cost.");
+assert(trip.costBreakdown.stay[0].cost > 0, "Trip should include an itemized stay cost.");
 assert(build.tools.includes("parse_trip_request"), "Initial prompt should parse the trip request.");
 
 const budget = answerQuestion(trip, "What is included in the budget?");

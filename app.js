@@ -4,9 +4,9 @@ if (!agentCore) {
   throw new Error("TravelAgentCore did not load. Make sure agent.js is included before app.js.");
 }
 
-const { answerQuestion, createTripState, toolDetails } = agentCore;
+const { answerQuestion, toolDetails } = agentCore;
 
-const trip = createTripState();
+const trip = createBlankTripState();
 const toolLabels = {
   parse_trip_request: "Read trip request",
   search_flights: "Flights",
@@ -29,14 +29,14 @@ const dom = {
   tripTitle: document.querySelector("#tripTitle"),
   tripSubtitle: document.querySelector("#tripSubtitle"),
   tripTotal: document.querySelector("#tripTotal"),
+  destinationCard: document.querySelector("#destinationCard"),
+  destinationHero: document.querySelector("#destinationHero"),
   flightTitle: document.querySelector("#flightTitle"),
-  flightMeta: document.querySelector("#flightMeta"),
   hotelTitle: document.querySelector("#hotelTitle"),
-  hotelMeta: document.querySelector("#hotelMeta"),
-  activityOneTitle: document.querySelector("#activityOneTitle"),
-  activityOneCost: document.querySelector("#activityOneCost"),
-  activityTwoTitle: document.querySelector("#activityTwoTitle"),
-  activityTwoCost: document.querySelector("#activityTwoCost"),
+  flightCosts: document.querySelector("#flightCosts"),
+  stayCosts: document.querySelector("#stayCosts"),
+  activityCosts: document.querySelector("#activityCosts"),
+  otherCosts: document.querySelector("#otherCosts"),
   routeOrigin: document.querySelector("#routeOrigin"),
   routeStay: document.querySelector("#routeStay"),
   routeDestination: document.querySelector("#routeDestination"),
@@ -80,9 +80,60 @@ function createBlankTripState() {
     },
     highlights: [],
     daysPlan: ["Describe the trip you want, and the agent will build flights, lodging, activities, and an estimated budget."],
+    costBreakdown: {
+      flights: [{ label: "Add origin and destination", cost: 0 }],
+      stay: [{ label: "Add destination and trip length", cost: 0 }],
+      activities: [{ label: "Activities will appear here", cost: 0 }],
+      other: [{ label: "Food and local transport estimate", cost: 0 }]
+    },
     lastBrief: "",
     notes: []
   };
+}
+
+function formatMoney(cost) {
+  return `${trip.currency} ${Number(cost || 0)}`;
+}
+
+function renderCostList(element, items) {
+  element.innerHTML = "";
+  const safeItems = Array.isArray(items) && items.length ? items : [{ label: "Not planned yet", cost: 0 }];
+  safeItems.forEach((item) => {
+    const row = document.createElement("li");
+    const label = document.createElement("span");
+    const cost = document.createElement("strong");
+    label.textContent = item.label || "Expense";
+    cost.textContent = formatMoney(item.cost);
+    row.append(label, cost);
+    element.append(row);
+  });
+}
+
+function fallbackCostBreakdown() {
+  return {
+    flights: [{ label: trip.flight.route || "Flight estimate", cost: trip.flight.cost || 0 }],
+    stay: [{ label: `${trip.hotel.title || "Stay"} - ${trip.hotel.nights || 0} night${trip.hotel.nights === 1 ? "" : "s"}`, cost: trip.hotel.cost || 0 }],
+    activities: trip.highlights.length
+      ? trip.highlights.map((item) => ({ label: `Day ${item.day}: ${item.title}`, cost: item.cost || 0 }))
+      : [{ label: "Activities estimate", cost: 0 }],
+    other: [{ label: "Food and local transport", cost: Math.max(0, (trip.total || 0) - (trip.flight.cost || 0) - (trip.hotel.cost || 0)) }]
+  };
+}
+
+function setDestinationTheme() {
+  const value = trip.isEmpty ? "blank" : trip.destination.toLowerCase();
+  dom.destinationCard.dataset.destination = value.includes("honolulu") || value.includes("hawaii")
+    ? "island"
+    : value.includes("tokyo")
+      ? "city-night"
+      : value.includes("paris")
+        ? "classic"
+        : value.includes("new york")
+          ? "city"
+          : value.includes("lisbon")
+            ? "coast"
+            : "custom";
+  dom.destinationHero.textContent = trip.isEmpty ? "Where to?" : trip.destination;
 }
 
 function addMessage(role, text, tools = []) {
@@ -164,16 +215,17 @@ function renderTrip() {
 
   dom.tripTotal.textContent = `${trip.currency} ${trip.total}`;
   dom.flightTitle.textContent = trip.flight.title;
-  dom.flightMeta.textContent = `${trip.flight.route} - ${trip.currency} ${trip.flight.cost}`;
   dom.hotelTitle.textContent = trip.hotel.title;
-  dom.hotelMeta.textContent = `${trip.hotel.nights} night${trip.hotel.nights === 1 ? "" : "s"} - ${trip.currency} ${trip.hotel.cost}`;
-  dom.activityOneTitle.textContent = trip.highlights[0]?.title || "Daily activity";
-  dom.activityOneCost.textContent = `Day ${trip.highlights[0]?.day || 1} - ${trip.currency} ${trip.highlights[0]?.cost || 0}`;
-  dom.activityTwoTitle.textContent = trip.highlights[1]?.title || "Activity plan";
-  dom.activityTwoCost.textContent = `Day ${trip.highlights[1]?.day || 2} - ${trip.currency} ${trip.highlights[1]?.cost || 0}`;
   dom.routeOrigin.textContent = trip.origin;
   dom.routeStay.textContent = trip.hotel.area || "Stay";
   dom.routeDestination.textContent = trip.destination;
+  setDestinationTheme();
+
+  const costBreakdown = trip.costBreakdown || fallbackCostBreakdown();
+  renderCostList(dom.flightCosts, costBreakdown.flights);
+  renderCostList(dom.stayCosts, costBreakdown.stay);
+  renderCostList(dom.activityCosts, costBreakdown.activities);
+  renderCostList(dom.otherCosts, costBreakdown.other);
 
   dom.timeline.innerHTML = "";
   trip.daysPlan.forEach((plan, index) => {
@@ -221,7 +273,7 @@ async function callServerAgent(text) {
 
 async function handlePrompt(text, shouldEchoUser = true) {
   if (shouldEchoUser) addMessage("user", text);
-  if (trip.isEmpty) applyTrip(createTripState());
+  if (trip.isEmpty) delete trip.isEmpty;
 
   let result;
   try {
