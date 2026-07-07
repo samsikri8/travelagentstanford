@@ -31,7 +31,10 @@
               <p class="eyebrow">Agent Chat</p>
               <h2>Trip planner</h2>
             </div>
-            <span class="live-pill" id="agentMode">Local</span>
+            <div class="panel-actions">
+              <span class="live-pill" id="agentMode">Local</span>
+              <button type="button" class="reset-btn" id="resetBtn">New trip</button>
+            </div>
           </header>
 
           <div class="messages" id="messages" aria-live="polite">
@@ -41,9 +44,9 @@
             <article class="message agent">
               <p>Done. I made up a 6-day Honolulu plan with flights, a Waikiki hotel, daily activities, and a group estimate.</p>
               <div class="tool-row">
-                <span>search_flights</span>
-                <span>search_hotels</span>
-                <span>find_activities</span>
+                <span>Flights</span>
+                <span>Stay</span>
+                <span>Activities</span>
               </div>
             </article>
             <article class="message user">

@@ -74,6 +74,14 @@ button {
   justify-content: flex-start;
 }
 
+.panel-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .status-dot {
   width: 13px;
   height: 13px;
@@ -217,14 +225,16 @@ h3 {
 
 .quick-actions button,
 .composer button,
-#cheaperBtn {
+#cheaperBtn,
+.reset-btn {
   border: 1px solid var(--line);
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
 .quick-actions button:hover,
 .composer button:hover,
-#cheaperBtn:hover {
+#cheaperBtn:hover,
+.reset-btn:hover {
   transform: translateY(-1px);
   border-color: rgba(36, 92, 144, 0.35);
 }
@@ -254,6 +264,15 @@ h3 {
   color: white;
   font-weight: 800;
   padding: 0 16px;
+}
+
+.reset-btn {
+  border-radius: 999px;
+  background: #fffaf3;
+  color: var(--ink);
+  padding: 7px 11px;
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
 .artifact-panel {

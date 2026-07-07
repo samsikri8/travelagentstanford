@@ -23,6 +23,7 @@ const dom = {
   input: document.querySelector("#tripInput"),
   quickActions: document.querySelectorAll("[data-prompt]"),
   cheaperBtn: document.querySelector("#cheaperBtn"),
+  resetBtn: document.querySelector("#resetBtn"),
   agentMode: document.querySelector("#agentMode"),
   tripPrefs: document.querySelector("#tripPrefs"),
   tripTitle: document.querySelector("#tripTitle"),
@@ -44,6 +45,45 @@ const dom = {
   agentExplainer: document.querySelector("#agentExplainer"),
   toolCards: document.querySelectorAll(".tool-card")
 };
+
+const defaultToolCopy = {
+  search_flights: "Compares route, timing, and estimated group fare.",
+  search_hotels: "Chooses a hotel area that fits the group and budget.",
+  find_activities: "Builds a daily plan around the traveler preferences.",
+  estimate_budget: "Tracking trip total as plans change."
+};
+
+function createBlankTripState() {
+  return {
+    isEmpty: true,
+    destination: "Plan a new trip",
+    region: "",
+    destinationKey: "",
+    origin: "Origin",
+    airport: "",
+    days: 0,
+    travelers: 0,
+    budget: "not set",
+    style: "tell me what you want",
+    total: 0,
+    currency: "USD",
+    flight: {
+      title: "Flight search ready",
+      route: "Add origin and destination",
+      cost: 0
+    },
+    hotel: {
+      title: "Stay search ready",
+      area: "Destination",
+      nights: 0,
+      cost: 0
+    },
+    highlights: [],
+    daysPlan: ["Describe the trip you want, and the agent will build flights, lodging, activities, and an estimated budget."],
+    lastBrief: "",
+    notes: []
+  };
+}
 
 function addMessage(role, text, tools = []) {
   const article = document.createElement("article");
@@ -85,20 +125,42 @@ function setToolState(tools, summary) {
   dom.agentExplainer.textContent = summary || "The agent answered from the current trip plan.";
 }
 
-function renderTrip() {
-  const budgetLabel = trip.budget === "budget"
-    ? "budget-conscious"
-    : trip.budget === "flexible"
-      ? "flexible budget"
-      : trip.budget;
-  dom.tripTitle.textContent = `${trip.destination} - ${trip.days} day${trip.days === 1 ? "" : "s"}`;
-  dom.tripSubtitle.textContent = `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"} - ${budgetLabel} - ${trip.style}`;
-  dom.tripPrefs.innerHTML = "";
-  [trip.origin, `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"}`, trip.budget, `${trip.days} days`].forEach((item) => {
-    const chip = document.createElement("span");
-    chip.textContent = item;
-    dom.tripPrefs.append(chip);
+function resetToolState() {
+  dom.toolCards.forEach((card) => {
+    const name = card.dataset.tool;
+    card.classList.remove("active", "done");
+    card.querySelector("p").textContent = defaultToolCopy[name] || "Ready for the next planning step.";
   });
+
+  dom.agentStatus.textContent = "Ready for a new trip";
+  dom.agentExplainer.textContent = "Tell the agent where you want to go, who is traveling, when, and what kind of trip you want.";
+}
+
+function renderTrip() {
+  if (trip.isEmpty) {
+    dom.tripTitle.textContent = "Plan a new trip";
+    dom.tripSubtitle.textContent = "Tell the agent where you want to go, who is traveling, and what kind of trip you want.";
+    dom.tripPrefs.innerHTML = "";
+    ["origin", "travelers", "budget", "dates"].forEach((item) => {
+      const chip = document.createElement("span");
+      chip.textContent = item;
+      dom.tripPrefs.append(chip);
+    });
+  } else {
+    const budgetLabel = trip.budget === "budget"
+      ? "budget-conscious"
+      : trip.budget === "flexible"
+        ? "flexible budget"
+        : trip.budget;
+    dom.tripTitle.textContent = `${trip.destination} - ${trip.days} day${trip.days === 1 ? "" : "s"}`;
+    dom.tripSubtitle.textContent = `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"} - ${budgetLabel} - ${trip.style}`;
+    dom.tripPrefs.innerHTML = "";
+    [trip.origin, `${trip.travelers} traveler${trip.travelers === 1 ? "" : "s"}`, trip.budget, `${trip.days} days`].forEach((item) => {
+      const chip = document.createElement("span");
+      chip.textContent = item;
+      dom.tripPrefs.append(chip);
+    });
+  }
 
   dom.tripTotal.textContent = `${trip.currency} ${trip.total}`;
   dom.flightTitle.textContent = trip.flight.title;
@@ -130,6 +192,20 @@ function applyTrip(nextTrip) {
   Object.assign(trip, nextTrip);
 }
 
+function resetPlanner() {
+  applyTrip(createBlankTripState());
+  dom.messages.innerHTML = "";
+  dom.agentMode.textContent = "Local";
+  dom.input.value = "";
+  renderTrip();
+  resetToolState();
+  addMessage(
+    "agent",
+    "Fresh slate. Tell me the destination, origin, group size, trip length, budget, and what you want to do each day."
+  );
+  dom.input.focus();
+}
+
 async function callServerAgent(text) {
   if (location.protocol === "file:") return null;
 
@@ -145,6 +221,7 @@ async function callServerAgent(text) {
 
 async function handlePrompt(text, shouldEchoUser = true) {
   if (shouldEchoUser) addMessage("user", text);
+  if (trip.isEmpty) applyTrip(createTripState());
 
   let result;
   try {
@@ -194,5 +271,7 @@ dom.quickActions.forEach((button) => {
 dom.cheaperBtn.addEventListener("click", () => {
   handlePrompt("Make it cheaper");
 });
+
+dom.resetBtn.addEventListener("click", resetPlanner);
 
 renderTrip();
